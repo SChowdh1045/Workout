@@ -1,5 +1,7 @@
 <script>
     import { createEventDispatcher } from "svelte";
+    import "../app.css";
+
     const dispatch = createEventDispatcher();
 
     const handleClose = () => {
@@ -7,8 +9,20 @@
     }
 </script>
 
-<div style="border: 2px solid red;">
-    Something
-    <slot></slot>
-    <button on:click={handleClose}>close</button>
+<div class="border-2 border-solid border-red-500 rounded text-center w-2/5 mx-auto p-2">
+    <slot />
+    <button class="btn btn-blue" on:click={handleClose}>Close</button>
 </div>
+
+
+<style>
+    .btn {
+      @apply font-bold py-2 px-4 rounded;
+    }
+    .btn-blue {
+      @apply bg-red-600 text-white;
+    }
+    .btn-blue:hover {
+      @apply bg-red-700 cursor-pointer;
+    }
+</style>
