@@ -1,5 +1,7 @@
 <script>
   import Modal from "./components/Modal.svelte";
+  import Calendar from "./components/Calendar.svelte";
+
   import "./app.css";
 
   let show = false;
@@ -8,31 +10,31 @@
   const day_info = [
     {
     "day":"Monday",
-    "video":"https://www.youtube.com/embed/MvsAesQ-4zA"
+    "video":"https://www.youtube.com/embed/mm47bCaCzpQ"
     },
     {
     "day":"Tuesday",
-    "video":"https://www.youtube.com/embed/MvsAesQ-4zA"
+    "video":""
     },
     {
     "day":"Wednesday",
-    "video":"https://www.youtube.com/embed/MvsAesQ-4zA"
+    "video":""
     },
     {
     "day":"Thursday",
-    "video":"https://www.youtube.com/embed/MvsAesQ-4zA"
+    "video":"https://www.youtube.com/embed/DwOxd4uV0J4"
     },
     {
     "day":"Friday",
-    "video":"https://www.youtube.com/embed/MvsAesQ-4zA"
+    "video":""
     },
     {
     "day":"Saturday",
-    "video":"https://www.youtube.com/embed/MvsAesQ-4zA"
+    "video":""
     },
     {
     "day":"Sunday",
-    "video":"https://www.youtube.com/embed/MvsAesQ-4zA"
+    "video":"https://www.youtube.com/embed/9MYeyEV5u6Q"
     },
   ];
 
@@ -40,15 +42,11 @@
     show = true;
     index = i;
   }
-
-  const handleClose = () => {
-    show = false;
-  }
 </script>
 
 
 <div class="m-3">
-  <h1 class="shadow-lg text-5xl text-center py-3">Testing</h1>
+  <h1 class="shadow-lg text-5xl text-center py-3 text-white">Testing</h1>
 
   <ul class="flex justify-evenly my-10">
     <li class="btn btn-blue" on:click={() => handleClick(0)}>Monday</li>
@@ -62,16 +60,22 @@
 
 
   {#if show}
-    <Modal on:close={() => handleClose()}>
-      <div>
-        <h2 class="text-2xl underline">{day_info[index].day}</h2>
+    <Modal on:close={() => show = false}>
+      <div class="mb-8">
+        <h2 class="text-2xl underline text-white">{day_info[index].day}</h2>
         <iframe class="w-4/5 mx-auto" src={day_info[index].video} title="1 Second Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-        <p>INSTRUCTIONS:</p>
+        <p class="text-white mt-5">INSTRUCTIONS:</p>
+        <div class="text-white border-2 border-solid border-green-300 w-10/12 m-auto">
+          <p>1. First exercise</p>
+          <p>2. Second exercise</p>
+          <p>3. Third exercise</p>
+        </div>
       </div>
     </Modal>
   {/if}
 
-  <h1 class="text-center mt-6">[Insert Calendar]</h1>
+  <h1 class="text-center mt-6 text-white">[Insert Calendar]</h1>
+  <Calendar/>
 </div>
 
 
