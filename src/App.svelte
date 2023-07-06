@@ -73,8 +73,7 @@
       </div>
     </Modal>
   {/if}
-
-  <h1 class="text-center mt-6 text-white">[Insert Calendar]</h1>
+  
   <Calendar/>
 </div>
 
