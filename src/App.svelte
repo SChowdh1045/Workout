@@ -65,6 +65,7 @@
         <h2 class="text-2xl underline text-white">{day_info[index].day}</h2>
         <iframe class="w-4/5 mx-auto" src={day_info[index].video} title="1 Second Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
         <p class="text-white mt-5">INSTRUCTIONS:</p>
+        
         <div class="text-white border-2 border-solid border-green-300 w-10/12 m-auto">
           <p>1. First exercise</p>
           <p>2. Second exercise</p>

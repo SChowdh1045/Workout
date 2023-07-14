@@ -21,6 +21,10 @@
                                                                     // getDate() returns the day of the month (from 1-31) ;
                                                                     // Adding +1 because I need current month (So if right now is July, I need to add +1 to the monthIndex to August to indicate the last day of July (total # of days in July)) ]
 
+    // To calculate how many cells there should be in the calendar for the given month (to avoid extra unnecessary rows of cells)
+    $: cellQuantity = Math.ceil((firstDayIndex + numberOfDays) / 7) * 7;  // firstDayIndex is to know how many blank spaces there are before the first day
+                                                                            //  Add firstDayIndex + numberOfDays to figure out how far to push the calendar down
+                                                                            // Then divide by 7 to know how many rows there would be. Take the ceiling of that number then multiply by 7 to have nice calendar format
 
     const goToPrevMonth = () => {
         monthIndex -= 1;
@@ -63,7 +67,7 @@
         </ul>
         
         <ul class="days">
-            {#each Array(42) as _, i}  <!-- Can also do: {length: 42}-->
+            {#each Array(cellQuantity) as _, i}  <!-- Can also do: {length: 42}-->
                 {#if i < firstDayIndex || i >= numberOfDays+firstDayIndex}
                     <li>&nbsp;</li>
                 {:else}
@@ -73,6 +77,7 @@
         </ul>
     </div> 
 </main>
+
 
 <style>
     ul {list-style-type: none;}
