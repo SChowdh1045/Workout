@@ -43,17 +43,24 @@
             year += 1;
         }
     }
+
+    const goToToday = () => {
+        monthIndex = today.month;  // or can do just "monthIndex = date.getMonth()"
+        year = today.year;  // or can do just "year = date.getFullYear()"
+    }
 </script>
 
 
 <main>
     <div class="calendarWrapper">
         <div class="month">
-            <ul style="display: flex; justify-content: space-between;">
+            <ul style="display: flex; justify-content: space-between; align-items: center;">
                 <li class="prev" on:click={goToPrevMonth}>&#10094;</li>
                 <li>{month}<br>{year}</li>
                 <li class="next" on:click={goToNextMonth}>&#10095;</li>          
               </ul>
+
+              <button id="today_btn" on:click={goToToday}>TODAY</button>
         </div>
           
         <ul class="weekdays">
@@ -71,7 +78,10 @@
                 {#if i < firstDayIndex || i >= numberOfDays+firstDayIndex}
                     <li>&nbsp;</li>
                 {:else}
-                    <li class:active={i == (currentDay-1)+firstDayIndex && monthIndex==today.month && year==today.year}>{(i+1)-firstDayIndex}</li>
+                    <!-- "(currentDay-1)+firstDayIndex"  targets the original numbering. For this line, it's to see if the iterable "i" value is the current day's value.
+                    On the other hand, "(i+1)-firstDayIndex" is to modify the numbering from the original. This is to make it to an actual calendar. 
+                    NOTE: When dealing with the iterable "i", we are working with the original numbering under the hood despite it being presented as modified for the user. -->
+                    <li class:active={i == (currentDay-1)+firstDayIndex && monthIndex==today.month && year==today.year}>{(i+1)-firstDayIndex}</li> 
                 {/if}
             {/each}
         </ul>
@@ -92,7 +102,7 @@
 
     /* Month header */
     .month {
-    padding: 70px 25px;
+    padding: 70px 25px 25px;
     background: #1abc9c;
     text-align: center;
     }
@@ -106,9 +116,41 @@
 
     .prev{
         cursor: pointer;
+        transition: 0.1s;
     }
+
+    .prev:hover{
+        border: 2px solid white;
+        border-radius: 8px;
+        padding: 0.1%;
+    }
+
     .next{
         cursor: pointer;
+        transition: 0.1s;
+    }
+
+    .next:hover{
+        border: 2px solid white;
+        border-radius: 8px;
+        padding: 0.1%;
+    }
+
+    #today_btn{
+        border: 3px solid white;
+        border-radius: 5px;
+        padding: 0.90%;
+        margin-top: 5%;
+        color: rgb(241, 240, 240);
+        font-weight: bold;
+        transition: 0.2s;
+        background: #349b86;
+    }
+
+    #today_btn:hover{
+        padding: 1.1%;
+        background: #31b49a;
+        
     }
 
     /* Weekdays (Mon-Sun) */
