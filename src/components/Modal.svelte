@@ -25,4 +25,8 @@
     .btn-blue:hover {
       @apply bg-red-700 cursor-pointer;
     }
+
+    button{
+      transition: 0.1s;
+    }
 </style>

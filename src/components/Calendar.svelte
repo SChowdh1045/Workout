@@ -1,4 +1,6 @@
 <script>
+    import Form from './Form.svelte';
+
     const date = new Date();
 
     const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 
@@ -9,6 +11,9 @@
         month: date.getMonth(),
         year: date.getFullYear(),
     }
+
+    let show_form = false;
+    let dayClicked = 0;
 
     let monthIndex = date.getMonth();
 
@@ -26,6 +31,11 @@
                                                                             //  Add firstDayIndex + numberOfDays to figure out how far to push the calendar down
                                                                             // Then divide by 7 to know how many rows there would be. Take the ceiling of that number then multiply by 7 to have nice calendar format
 
+    const targetCalendar = document.querySelectorAll('.calendarWrapper');
+    const targetModal = document.querySelector('.calendarWrapper');
+
+    
+    
     const goToPrevMonth = () => {
         monthIndex -= 1;
 
@@ -47,6 +57,11 @@
     const goToToday = () => {
         monthIndex = today.month;  // or can do just "monthIndex = date.getMonth()"
         year = today.year;  // or can do just "year = date.getFullYear()"
+    }
+
+    const showFormFunction = (day_number) => {
+        show_form = true;
+        dayClicked = day_number;
     }
 </script>
 
@@ -76,15 +91,26 @@
         <ul class="days">
             {#each Array(cellQuantity) as _, i}  <!-- Can also do: {length: 42}-->
                 {#if i < firstDayIndex || i >= numberOfDays+firstDayIndex}
-                    <li>&nbsp;</li>
+                    <li><div class="dot_blank"></div>&nbsp;</li>
                 {:else}
                     <!-- "(currentDay-1)+firstDayIndex"  targets the original numbering. For this line, it's to see if the iterable "i" value is the current day's value.
                     On the other hand, "(i+1)-firstDayIndex" is to modify the numbering from the original. This is to make it to an actual calendar. 
                     NOTE: When dealing with the iterable "i", we are working with the original numbering under the hood despite it being presented as modified for the user. -->
-                    <li class:active={i == (currentDay-1)+firstDayIndex && monthIndex==today.month && year==today.year}>{(i+1)-firstDayIndex}</li> 
+                    <li class="highlight" class:active={i == (currentDay-1)+firstDayIndex && monthIndex==today.month && year==today.year} on:click={() => showFormFunction((i+1)-firstDayIndex)}>
+                        <div class="dot"></div>{(i+1)-firstDayIndex}
+                    </li> 
                 {/if}
             {/each}
         </ul>
+        
+        {#if show_form}
+            <Form on:close={() => show_form = false}>
+                <h2>Summary for <br/> <b>{month} {dayClicked}, {year}</b></h2>
+            </Form>
+
+            <!-- {targetCalendar.style.backgroundColor = 'yellow'} -->
+        {/if}
+        
     </div> 
 </main>
 
@@ -98,6 +124,7 @@
         margin: auto;
         border: 4px solid rgb(8, 148, 106);
         border-radius: 4px;
+        position: relative;
     }
 
     /* Month header */
@@ -171,7 +198,7 @@
     .days {
     padding: 10px 0;
     background: #eee;
-    margin: 0;
+    padding: 0;
     }
 
     .days li {
@@ -179,11 +206,15 @@
     border: 1px solid black;
     padding: 9px;
     width: 14.28%;
+    margin: 0;
     text-align: center;
-    margin-bottom: 1px;
     font-size: 1.2rem;
     color: #777;
-    cursor: pointer;
+    }
+
+    .highlight:hover{
+        cursor: pointer;
+        background-color: #dfd8d8;
     }
 
     /* Highlight the "current" day */
@@ -191,5 +222,19 @@
     padding: 5px;
     background: #1abc9c;
     color: white !important
+    }
+
+    .dot {
+    height: 12px;
+    width: 12px;
+    background-color: #ff0000;
+    border-radius: 50%;
+    margin: auto;
+    }
+
+    .dot_blank{
+    height: 12px;
+    width: 12px;
+    background-color: #eee;
     }
 </style>

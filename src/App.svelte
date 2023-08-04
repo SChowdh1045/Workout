@@ -89,4 +89,8 @@
   .btn-blue:hover {
     @apply bg-blue-700 cursor-pointer;
   }
+
+  ul li{
+    transition: 0.1s;
+  }
 </style>
