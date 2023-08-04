@@ -9,7 +9,7 @@
 
   const day_info = [
     {
-    "day":"Monday",
+      "day":"Monday",
     "video":"https://www.youtube.com/embed/mm47bCaCzpQ"
     },
     {
@@ -44,7 +44,6 @@
   }
 </script>
 
-
 <div class="m-3">
   <h1 class="shadow-lg text-5xl text-center py-3 text-white">Testing</h1>
 
@@ -58,15 +57,23 @@
     <li class="btn btn-blue" on:click={() => handleClick(6)}>Sunday</li>
   </ul>
 
-
   {#if show}
-    <Modal on:close={() => show = false}>
+    <Modal on:close={() => (show = false)}>
       <div class="mb-8">
         <h2 class="text-2xl underline text-white">{day_info[index].day}</h2>
-        <iframe class="w-4/5 mx-auto" src={day_info[index].video} title="1 Second Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+        <iframe
+          class="w-4/5 mx-auto"
+          src={day_info[index].video}
+          title="1 Second Video"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen
+        />
         <p class="text-white mt-5">INSTRUCTIONS:</p>
-        
-        <div class="text-white border-2 border-solid border-green-300 w-10/12 m-auto">
+
+        <div
+          class="text-white border-2 border-solid border-green-300 w-10/12 m-auto"
+        >
           <p>1. First exercise</p>
           <p>2. Second exercise</p>
           <p>3. Third exercise</p>
@@ -74,10 +81,9 @@
       </div>
     </Modal>
   {/if}
-  
-  <Calendar/>
-</div>
 
+  <Calendar />
+</div>
 
 <style>
   .btn {
