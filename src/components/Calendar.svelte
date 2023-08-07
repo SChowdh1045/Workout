@@ -59,16 +59,25 @@
         year = today.year;  // or can do just "year = date.getFullYear()"
     }
 
+
+    let grayedOut = false;
+
     const showFormFunction = (day_number) => {
         show_form = true;
         dayClicked = day_number;
+        grayedOut = true;
+    }
+
+    const handleClose = () => {
+        show_form = false;
+        grayedOut = false;
     }
 </script>
 
 
 <main>
     <div class="calendarWrapper">
-        <div class="month">
+        <div class="month" class:grayedOut>  <!-- "class:grayedOut" is equivalent to "class:grayedOut={grayedOut}". The first "grayedOut" is the class to toggle. The second "grayedOut" is the boolean variable -->
             <ul style="display: flex; justify-content: space-between; align-items: center;">
                 <li class="prev" on:click={goToPrevMonth}>&#10094;</li>
                 <li>{month}<br>{year}</li>
@@ -78,7 +87,7 @@
               <button id="today_btn" on:click={goToToday}>TODAY</button>
         </div>
           
-        <ul class="weekdays">
+        <ul class="weekdays" class:active={grayedOut}>
             <li>Su</li>
             <li>M</li>
             <li>Tu</li>
@@ -88,7 +97,7 @@
             <li>Sa</li>
         </ul>
         
-        <ul class="days">
+        <ul class="days" class:grayedOut>
             {#each Array(cellQuantity) as _, i}  <!-- Can also do: {length: 42}-->
                 {#if i < firstDayIndex || i >= numberOfDays+firstDayIndex}
                     <li><div class="dot_blank"></div>&nbsp;</li>
@@ -104,8 +113,27 @@
         </ul>
         
         {#if show_form}
-            <Form on:close={() => show_form = false}>
+            <Form on:close={handleClose}>
                 <h2>Summary for <br/> <b>{month} {dayClicked}, {year}</b></h2>
+                
+                <form>
+                    <label for="wakeUp">When did I wake up?</label><br>
+                    <input type="text" id="wakeUp" name="wakeUp" value="John"><br>
+            
+                    <label for="workout">Did I today's workout?</label><br>
+                    <input type="text" id="workout" name="workout" value="Doe"><br><br>
+            
+                    <label for="bike">Did I bike outside today?</label><br>
+                    <input type="text" id="bike" name="bike" value="Doe"><br><br>
+            
+                    <label for="Foods">Foods I ate today:</label><br>
+                    <input type="text" id="Foods" name="Foods" value="Doe"><br><br>
+            
+                    <label for="Bedtime">When am I filling out this form?</label><br>
+                    <input type="text" id="Bedtime" name="Bedtime" value="Doe"><br><br>
+            
+                    <!-- <input type="submit" value="Submit"> -->
+                </form>
             </Form>
 
             <!-- {targetCalendar.style.backgroundColor = 'yellow'} -->
@@ -125,6 +153,11 @@
         border: 4px solid rgb(8, 148, 106);
         border-radius: 4px;
         position: relative;
+    }
+
+    .grayedOut{
+        background-color: black;
+        opacity: 0.5;
     }
 
     /* Month header */
