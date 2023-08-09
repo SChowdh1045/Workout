@@ -1,5 +1,7 @@
 <script>
     import Form from './Form.svelte';
+    import clickOutside from './clickOutside.svelte';
+
 
     const date = new Date();
 
@@ -61,16 +63,25 @@
 
 
     let grayedOut = false;
+    let highlight = true;
 
     const showFormFunction = (day_number) => {
         show_form = true;
         dayClicked = day_number;
         grayedOut = true;
+        highlight = false;
     }
 
     const handleClose = () => {
         show_form = false;
         grayedOut = false;
+        highlight = true;
+    }
+
+    const handleOutsideClick = (e) => {
+        if (show_form && !e.target.closest('.form_wrapper')){
+            handleClose();
+        }
     }
 </script>
 
@@ -82,12 +93,12 @@
                 <li class="prev" on:click={goToPrevMonth}>&#10094;</li>
                 <li>{month}<br>{year}</li>
                 <li class="next" on:click={goToNextMonth}>&#10095;</li>          
-              </ul>
+            </ul>
 
-              <button id="today_btn" on:click={goToToday}>TODAY</button>
+            <button id="today_btn" on:click={goToToday}>TODAY</button>
         </div>
-          
-        <ul class="weekdays" class:active={grayedOut}>
+        
+        <ul class="weekdays" class:grayedOut>
             <li>Su</li>
             <li>M</li>
             <li>Tu</li>
@@ -105,16 +116,18 @@
                     <!-- "(currentDay-1)+firstDayIndex"  targets the original numbering. For this line, it's to see if the iterable "i" value is the current day's value.
                     On the other hand, "(i+1)-firstDayIndex" is to modify the numbering from the original. This is to make it to an actual calendar. 
                     NOTE: When dealing with the iterable "i", we are working with the original numbering under the hood despite it being presented as modified for the user. -->
-                    <li class="highlight" class:active={i == (currentDay-1)+firstDayIndex && monthIndex==today.month && year==today.year} on:click={() => showFormFunction((i+1)-firstDayIndex)}>
+                    <li class:highlight class:active={i == (currentDay-1)+firstDayIndex && monthIndex==today.month && year==today.year} on:click={highlight ? () => showFormFunction((i+1)-firstDayIndex) : null}>
                         <div class="dot"></div>{(i+1)-firstDayIndex}
                     </li> 
                 {/if}
             {/each}
         </ul>
         
+
         {#if show_form}
-            <Form on:close={handleClose}>
-                <h2>Summary for <br/> <b>{month} {dayClicked}, {year}</b></h2>
+            <!-- <Form on:close={handleClose}> -->
+            <div class="form_wrapper" on:click={handleOutsideClick}>
+                <h2 style="margin-bottom: 8%;">Summary for <br/> <b>{month} {dayClicked}, {year}</b></h2>
                 
                 <form>
                     <label for="wakeUp">When did I wake up?</label><br>
@@ -133,10 +146,11 @@
                     <input type="text" id="Bedtime" name="Bedtime" value="Doe"><br><br>
             
                     <!-- <input type="submit" value="Submit"> -->
+                    <button class="close_btn" on:click={handleClose}>Close</button>
                 </form>
-            </Form>
-
-            <!-- {targetCalendar.style.backgroundColor = 'yellow'} -->
+            </div>
+        
+            <!-- </Form> -->
         {/if}
         
     </div> 
@@ -158,6 +172,7 @@
     .grayedOut{
         background-color: black;
         opacity: 0.5;
+        /* cursor: context-menu; */
     }
 
     /* Month header */
@@ -254,7 +269,7 @@
     .active {
     padding: 5px;
     background: #1abc9c;
-    color: white !important
+    color: white !important;
     }
 
     .dot {
@@ -269,5 +284,31 @@
     height: 12px;
     width: 12px;
     background-color: #eee;
+    }
+
+    .form_wrapper{
+        border: solid green 5px;
+        border-radius: 3px;
+        background-color: #A7F3D0;
+        text-align: center;
+        width: 40%;
+        margin: 0 auto;
+        padding: 0.5rem;
+        position: absolute;
+        left: 30%;
+        bottom: 10%;
+    }
+
+    .close_btn{
+        font-weight: bold;
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+        background-color: rgb(207, 22, 22);
+        color: white;
+    }
+
+    .close_btn:hover{
+        background-color: rgb(226, 48, 48);
+        cursor: pointer;
     }
 </style>
