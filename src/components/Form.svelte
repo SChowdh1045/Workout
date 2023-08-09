@@ -9,7 +9,7 @@
     }
 </script>
 
-<div class="border-[5px] bg-green-200 border-solid border-green-600 rounded-md text-center w-2/5 mx-auto p-2 absolute left-[30%] bottom-[10%]">
+<!-- <div class="border-[5px] bg-green-200 border-solid border-green-600 rounded-md text-center w-2/5 mx-auto p-2 absolute left-[30%] bottom-[10%]">
     <slot />
     <form action="/action_page.php">
         <label for="wakeUp">When did I wake up?</label><br>
@@ -28,9 +28,9 @@
         <input type="text" id="Bedtime" name="Bedtime" value="Doe"><br><br>
 
         <!-- <input type="submit" value="Submit"> -->
-      </form> 
+      <!-- </form> 
     <button class="btn btn-blue" on:click={handleClose}>Close</button>
-</div>
+</div> --> -->
 
 
 <style>
