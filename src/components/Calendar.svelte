@@ -87,7 +87,7 @@
               <button id="today_btn" on:click={goToToday}>TODAY</button>
         </div>
           
-        <ul class="weekdays" class:active={grayedOut}>
+        <ul class="weekdays" class:grayedOut>
             <li>Su</li>
             <li>M</li>
             <li>Tu</li>
