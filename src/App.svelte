@@ -82,7 +82,7 @@
     </Modal>
   {/if}
 
-  <Calendar />
+  <Calendar/>
 </div>
 
 <style>
