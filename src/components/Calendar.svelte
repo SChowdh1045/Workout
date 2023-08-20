@@ -33,9 +33,6 @@
                                                                             //  Add firstDayIndex + numberOfDays to figure out how far to push the calendar down
                                                                             // Then divide by 7 to know how many rows there would be. Take the ceiling of that number then multiply by 7 to have nice calendar format
 
-    const targetCalendar = document.querySelectorAll('.calendarWrapper');
-    const targetModal = document.querySelector('.calendarWrapper');
-
     
     
     const goToPrevMonth = () => {
@@ -76,12 +73,6 @@
         show_form = false;
         grayedOut = false;
         highlight = true;
-    }
-
-    const handleOutsideClick = (e) => {
-        if (show_form && !e.target.closest('.form_wrapper')){
-            handleClose();
-        }
     }
 </script>
 
@@ -126,7 +117,7 @@
 
         {#if show_form}
             <!-- <Form on:close={handleClose}> -->
-            <div class="form_wrapper" on:click={handleOutsideClick}>
+            <div class="form_wrapper">
                 <h2 style="margin-bottom: 8%;">Summary for <br/> <b>{month} {dayClicked}, {year}</b></h2>
                 
                 <form>
