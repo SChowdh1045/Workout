@@ -13,11 +13,12 @@
     let tracker = {
         wakeUp_Hr: "",
         wakeUp_Min: "",
-        am_pm: "",
+        wakeup_am_pm: "",
         workout: "",
         foods: [],
         sleep_Hr: "",
         sleep_Min: "",
+        sleep_am_pm: ""
     }
 </script>
 
@@ -35,10 +36,11 @@ class="border-[5px] bg-green-200 border-solid border-green-600 rounded-md text-c
             <input type="number" id="wakeUp" name="wakeUp_Min" placeholder="00" min="0" max="59" bind:value={tracker.wakeUp_Min}>
 
             <div class="ml-2">
-                <input type="radio" id="am" name="time" value="am" class="text-lg">
-                <label for="am">AM</label><br/>
-                <input type="radio" id="pm" name="time" value="pm">
-                <label for="pm">PM</label>
+                <input type="radio" id="wakeUpAm" name="wakeUpTime" value="am" class="text-lg">
+                <label for="wakeUpAm">AM</label><br/>
+
+                <input type="radio" id="wakeUpPm" name="wakeUpTime" value="pm">
+                <label for="wakeUpPm">PM</label>
             </div>
         </div>
 
@@ -64,10 +66,11 @@ class="border-[5px] bg-green-200 border-solid border-green-600 rounded-md text-c
             <input type="number" id="Bedtime" name="Bedtime_Min" placeholder="00" min="0" max="59" bind:value={tracker.sleep_Min}><br>
 
             <div class="ml-2">
-                <input type="radio" id="am" name="time" value="am">
-                <label for="am">AM</label><br/>
-                <input type="radio" id="pm" name="time" value="pm">
-                <label for="pm">PM</label>
+                <input type="radio" id="amSleep" name="SleepTime" value="am">
+                <label for="amSleep">AM</label><br/>
+
+                <input type="radio" id="pmSleep" name="SleepTime" value="pm">
+                <label for="pmSleep">PM</label>
             </div>
         </div>
 

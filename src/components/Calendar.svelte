@@ -1,5 +1,6 @@
 <script>
     import Form from './Form.svelte';
+    import "../app.css";
 
     const date = new Date();
 
