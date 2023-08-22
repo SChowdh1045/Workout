@@ -61,16 +61,27 @@
     let grayedOut = false;
     let highlight = true;
     let dateID;
+    let logTracker = {};
 
     const showFormFunction = (e, day_number) => {
         show_form = true;
         dayClicked = day_number;
         grayedOut = true;
         highlight = false;
-        dateID = e.target.dataset.dateid;
+        dateID = e.target.dataset.dateid;  // Now both <li> tag and form have an ID (the same ID)
     }
 
     const handleClose = () => {
+        show_form = false;
+        grayedOut = false;
+        highlight = true;
+    }
+
+    const saveSchdeule = (e) => {
+        Object.defineProperty(logTracker, dateID, {value: e.detail, writable: true});    // Adding in a new log (day) to logTracker object
+        // console.log(logTracker);
+        
+        // Copied from "handleClose"
         show_form = false;
         grayedOut = false;
         highlight = true;
@@ -117,7 +128,7 @@
         
 
         {#if show_form}
-            <Form {dateID} on:close={handleClose}>
+            <Form {dateID} on:close={handleClose} on:submitLog={saveSchdeule}>
                 <h1 style="margin-bottom: 8%; font-size: x-large; font-weight: 600;">Summary for <br/> {month} {dayClicked}, {year}</h1>
             </Form>
         {/if}

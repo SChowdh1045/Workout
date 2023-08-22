@@ -1,0 +1,44 @@
+What time I woke up
+
+Did I do the day's workout? (If NOT, explain why)
+
+Did I bike outside?
+
+What did I eat during the day?
+
+What time am I filling out this form? (Should be before sleeping)
+
+
+
+
+
+Blueprint for log tracker (Object of objects):
+
+let logTracker = {
+    August_31_2023: {
+        wakeUp_Hr: "",
+        wakeUp_Min: "",
+        wakeup_am_pm: "",
+        workout: "",
+        foods: "",
+        sleep_Hr: "",
+        sleep_Min: "",
+        sleep_am_pm: ""
+    },
+
+    September_1_2023: {
+        wakeUp_Hr: "",
+        wakeUp_Min: "",
+        wakeup_am_pm: "",
+        workout: "",
+        foods: "",
+        sleep_Hr: "",
+        sleep_Min: "",
+        sleep_am_pm: ""
+    },
+
+    .
+    .
+    .
+    .
+}

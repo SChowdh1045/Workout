@@ -10,15 +10,30 @@
         dispatch('close');
     }
 
-    let tracker = {
+    let log = {
         wakeUp_Hr: "",
         wakeUp_Min: "",
         wakeup_am_pm: "",
         workout: "",
-        foods: [],
+        foods: "",
         sleep_Hr: "",
         sleep_Min: "",
         sleep_am_pm: ""
+    }
+
+    const submitLog = () => {
+        dispatch('submitLog', log);
+
+        log = {            
+            wakeUp_Hr: "",
+            wakeUp_Min: "",
+            wakeup_am_pm: "",
+            workout: "",
+            foods: "",
+            sleep_Hr: "",
+            sleep_Min: "",
+            sleep_am_pm: ""
+        }
     }
 </script>
 
@@ -28,18 +43,18 @@ class="border-[5px] bg-green-200 border-solid border-green-600 rounded-md text-c
 
     <slot/>
 
-    <form id={dateID}>
-        <label for="wakeUp" class="question">When did I wake up?</label><br>
+    <form id={dateID} on:submit|preventDefault={submitLog}>
+        <h3>When did I wake up?</h3><br>
         <div class="time">
-            <input type="number" id="wakeUp" name="wakeUp_Hr" placeholder="12" min="1" max="12" bind:value={tracker.wakeUp_Hr}><br>
+            <input type="number" id="wakeUp_Hr" name="wakeUp_Hr" placeholder="12" min="1" max="12" bind:value={log.wakeUp_Hr}><br>
             <span class="semi-colon">:</span>
-            <input type="number" id="wakeUp" name="wakeUp_Min" placeholder="00" min="0" max="59" bind:value={tracker.wakeUp_Min}>
+            <input type="number" id="wakeUp_Min" name="wakeUp_Min" placeholder="00" min="0" max="59" bind:value={log.wakeUp_Min}>
 
             <div class="ml-2">
-                <input type="radio" id="wakeUpAm" name="wakeUpTime" value="am" class="text-lg">
+                <input type="radio" id="wakeUpAm" name="wakeUpTime" value="am" bind:group={log.wakeup_am_pm}>
                 <label for="wakeUpAm">AM</label><br/>
 
-                <input type="radio" id="wakeUpPm" name="wakeUpTime" value="pm">
+                <input type="radio" id="wakeUpPm" name="wakeUpTime" value="pm" bind:group={log.wakeup_am_pm}>
                 <label for="wakeUpPm">PM</label>
             </div>
         </div>
@@ -47,36 +62,36 @@ class="border-[5px] bg-green-200 border-solid border-green-600 rounded-md text-c
         <h3 class="question">Did I today's workout?</h3><br>
         <div class="yes_no">
             <div>
-                <input type="radio" id="yes" name="workout" value="yes">
+                <input type="radio" id="yes" name="workout" value="yes" bind:group={log.workout}>
                 <label for="yes">Yes</label>
             </div>
             <div>
-                <input type="radio" id="no" name="workout" value="no">
+                <input type="radio" id="no" name="workout" value="no" bind:group={log.workout}>
                 <label for="no">No</label><br>
             </div>
         </div>
 
         <h3 class="question">Foods I ate today:</h3><br>
-        <textarea class="foods"></textarea><br><br>
+        <textarea id="foods" bind:value={log.foods}></textarea><br><br>
 
-        <label for="Bedtime" class="question">When am I filling out this form?</label><br>
+        <h3>When am I filling out this form?</h3><br>
         <div class="time">
-            <input type="number" id="Bedtime" name="Bedtime_Hr" placeholder="12" min="1" max="12" bind:value={tracker.sleep_Hr}><br>
+            <input type="number" id="Bedtime_Hr" name="Bedtime_Hr" placeholder="12" min="1" max="12" bind:value={log.sleep_Hr}><br>
             <span class="semi-colon">:</span>
-            <input type="number" id="Bedtime" name="Bedtime_Min" placeholder="00" min="0" max="59" bind:value={tracker.sleep_Min}><br>
+            <input type="number" id="Bedtime_Min" name="Bedtime_Min" placeholder="00" min="0" max="59" bind:value={log.sleep_Min}><br>
 
             <div class="ml-2">
-                <input type="radio" id="amSleep" name="SleepTime" value="am">
+                <input type="radio" id="amSleep" name="SleepTime" value="am" bind:group={log.sleep_am_pm}>
                 <label for="amSleep">AM</label><br/>
 
-                <input type="radio" id="pmSleep" name="SleepTime" value="pm">
+                <input type="radio" id="pmSleep" name="SleepTime" value="pm" bind:group={log.sleep_am_pm}>
                 <label for="pmSleep">PM</label>
             </div>
         </div>
 
         <div class="submit">
-            <input type="submit" value="Cancel" class="btn btn-red" on:click={handleClose}>
-            <input type="submit" value="Save" class="btn btn-green" on:click={handleClose}>
+            <button class="btn btn-red" on:click={handleClose}>Cancel</button>
+            <input type="submit" value="Save" class="btn btn-green">
         </div>
   </form>
 </div>
@@ -122,7 +137,7 @@ class="border-[5px] bg-green-200 border-solid border-green-600 rounded-md text-c
     }
 
 
-    .foods{
+    #foods{
         @apply resize-y -mt-6 border-solid border-[1px] border-black rounded-md max-h-16 px-3;
     }
 
