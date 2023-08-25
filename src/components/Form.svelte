@@ -24,6 +24,7 @@
     const submitLog = () => {
         dispatch('submitLog', log);
 
+        // Resetting log after submit
         log = {            
             wakeUp_Hr: "",
             wakeUp_Min: "",

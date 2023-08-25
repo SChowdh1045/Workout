@@ -78,7 +78,7 @@
     }
 
     const saveSchdeule = (e) => {
-        Object.defineProperty(logTracker, dateID, {value: e.detail, writable: true});    // Adding in a new log (day) to logTracker object
+        Object.defineProperty(logTracker, dateID, {value: e.detail, writable: true});    // Adding in a new day log to logTracker object
         // console.log(logTracker);
         
         // Copied from "handleClose"
