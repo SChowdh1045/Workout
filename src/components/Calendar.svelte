@@ -78,8 +78,8 @@
     }
 
     const saveSchdeule = (e) => {
-        Object.defineProperty(logTracker, dateID, {value: e.detail, writable: true});    // Adding in a new day log to logTracker object
-        // console.log(logTracker);
+        logTracker = Object.defineProperty(logTracker, dateID, {value: e.detail, writable: true});    // Adding in a new day log to logTracker object. The object that was passed to the function, with the specified property added or modified.
+        console.log(logTracker);
         
         // Copied from "handleClose"
         show_form = false;
@@ -120,7 +120,7 @@
                     On the other hand, "(i+1)-firstDayIndex" is to modify the numbering from the original. This is to make it to an actual calendar. 
                     NOTE: When dealing with the iterable "i", we are working with the original numbering under the hood despite it being presented as modified for the user. -->
                     <li class:highlight class:active={i == (currentDay-1)+firstDayIndex && monthIndex==today.month && year==today.year}  data-dateID="{month}_{(i+1)-firstDayIndex}_{year}" on:click={highlight ? (e) => showFormFunction(e, (i+1)-firstDayIndex) : null}>
-                        <div class="dot"></div>{(i+1)-firstDayIndex}
+                        <div class:dot={`${month}_${(i+1)-firstDayIndex}_${year}` in logTracker && logTracker[`${month}_${(i+1)-firstDayIndex}_${year}`].workout === 'yes'}></div>{(i+1)-firstDayIndex}
                     </li> 
                 {/if}
             {/each}
@@ -250,7 +250,7 @@
     color: white !important;
     }
 
-    .dot {
+    .dot{
     height: 12px;
     width: 12px;
     background-color: #ff0000;
