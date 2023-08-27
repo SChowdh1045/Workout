@@ -120,7 +120,10 @@
                     On the other hand, "(i+1)-firstDayIndex" is to modify the numbering from the original. This is to make it to an actual calendar. 
                     NOTE: When dealing with the iterable "i", we are working with the original numbering under the hood despite it being presented as modified for the user. -->
                     <li class:highlight class:active={i == (currentDay-1)+firstDayIndex && monthIndex==today.month && year==today.year}  data-dateID="{month}_{(i+1)-firstDayIndex}_{year}" on:click={highlight ? (e) => showFormFunction(e, (i+1)-firstDayIndex) : null}>
-                        <div class:dot={`${month}_${(i+1)-firstDayIndex}_${year}` in logTracker && logTracker[`${month}_${(i+1)-firstDayIndex}_${year}`].workout === 'yes'}></div>{(i+1)-firstDayIndex}
+                        <div class="blank_dot"
+                        class:green_dot={`${month}_${(i+1)-firstDayIndex}_${year}` in logTracker && logTracker[`${month}_${(i+1)-firstDayIndex}_${year}`].workout === 'yes'}
+                        class:red_dot={`${month}_${(i+1)-firstDayIndex}_${year}` in logTracker && logTracker[`${month}_${(i+1)-firstDayIndex}_${year}`].workout === 'no'}></div>
+                        {(i+1)-firstDayIndex}
                     </li> 
                 {/if}
             {/each}
@@ -236,6 +239,7 @@
     text-align: center;
     font-size: 1.2rem;
     color: #777;
+    height: 100%;
     }
 
     .highlight:hover{
@@ -250,10 +254,25 @@
     color: white !important;
     }
 
-    .dot{
+    .blank_dot{
     height: 12px;
     width: 12px;
-    background-color: #ff0000;
+    border-radius: 50%;
+    margin: auto;
+    }
+
+    .green_dot{
+    height: 12px;
+    width: 12px;
+    background-color: #2edf69;
+    border-radius: 50%;
+    margin: auto;
+    }
+
+    .red_dot{
+    height: 12px;
+    width: 12px;
+    background-color: #db2424;
     border-radius: 50%;
     margin: auto;
     }

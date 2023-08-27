@@ -14,8 +14,10 @@
         wakeUp_Hr: "",
         wakeUp_Min: "",
         wakeup_am_pm: "",
+
         workout: "",
         foods: "",
+
         sleep_Hr: "",
         sleep_Min: "",
         sleep_am_pm: ""
@@ -29,8 +31,10 @@
             wakeUp_Hr: "",
             wakeUp_Min: "",
             wakeup_am_pm: "",
+
             workout: "",
             foods: "",
+            
             sleep_Hr: "",
             sleep_Min: "",
             sleep_am_pm: ""
@@ -47,7 +51,7 @@ class="border-[5px] bg-green-200 border-solid border-green-600 rounded-md text-c
     <form id={dateID} on:submit|preventDefault={submitLog}>
         <h3>When did I wake up?</h3><br>
         <div class="time">
-            <input type="number" id="wakeUp_Hr" name="wakeUp_Hr" placeholder="12" min="1" max="12" bind:value={log.wakeUp_Hr}><br>
+            <input type="number" id="wakeUp_Hr" name="wakeUp_Hr" value="12" min="1" max="12"><br>
             <span class="semi-colon">:</span>
             <input type="number" id="wakeUp_Min" name="wakeUp_Min" placeholder="00" min="0" max="59" bind:value={log.wakeUp_Min}>
 
@@ -90,8 +94,9 @@ class="border-[5px] bg-green-200 border-solid border-green-600 rounded-md text-c
             </div>
         </div>
 
-        <div class="submit">
+        <div class="actions">
             <button class="btn btn-red" on:click={handleClose}>Cancel</button>
+            <input type="reset" value="Reset" class="btn btn-reset">
             <input type="submit" value="Save" class="btn btn-green">
         </div>
   </form>
@@ -117,6 +122,14 @@ class="border-[5px] bg-green-200 border-solid border-green-600 rounded-md text-c
     }
     .btn-green:hover {
       @apply bg-green-700 cursor-pointer;
+    }
+
+
+    .btn-reset {
+      @apply bg-yellow-500 text-white;
+    }
+    .btn-reset:hover {
+      @apply bg-yellow-600 cursor-pointer;
     }
 
 
@@ -155,7 +168,7 @@ class="border-[5px] bg-green-200 border-solid border-green-600 rounded-md text-c
         @apply text-black text-4xl mx-[0.2%];
     }
 
-    .submit{
-        @apply flex justify-between;
+    .actions{
+        @apply flex justify-evenly;
     }
 </style>
