@@ -1,6 +1,9 @@
 <script>
     import Form from './Form.svelte';
+    import {test} from '../store';
+    import { onDestroy } from 'svelte';
     import "../app.css";
+
 
     const date = new Date();
 
@@ -13,18 +16,16 @@
         year: date.getFullYear(),
     }
 
-    let show_form = false;
     let dayClicked = 0;
 
     let monthIndex = date.getMonth();
-
-    let currentDay = date.getDate();
     $: month = monthNames[monthIndex];
+
     let year = date.getFullYear();
 
     $: firstDayIndex = new Date(year, monthIndex, 1).getDay();  // .getDay() goes from 0-6 (Sun-Sat respectively)
     $: numberOfDays = new Date(year, monthIndex+1, 0).getDate();  // [ the 0 in "Date()" means the LAST day of the PREVIOUS month ; 
-                                                                    // getDate() returns the day of the month (from 1-31) ;
+                                                                    // getDate() returns the day of the month (from 1-28/29/30/31) ;
                                                                     // Adding +1 because I need current month (So if right now is July, I need to add +1 to the monthIndex to August to indicate the last day of July (total # of days in July)) ]
 
     // To calculate how many cells there should be in the calendar for the given month (to avoid extra unnecessary rows of cells)
@@ -33,7 +34,28 @@
                                                                             // Then divide by 7 to know how many rows there would be. Take the ceiling of that number then multiply by 7 to have nice calendar format
 
     
+    let show_form = false;
+    let grayedOut = false;
+    let highlight = true;
+    let dateID;
+    let logTracker = {};
     
+    let defaultLog = {
+        wakeUp_Hr: "",
+        wakeUp_Min: "",
+        wakeup_am_pm: "",
+
+        workout: "",
+        foods: "",
+        
+        sleep_Hr: "",
+        sleep_Min: "",
+        sleep_am_pm: ""
+    }
+    
+
+
+    // *** FUNCTIONS ***  //
     const goToPrevMonth = () => {
         monthIndex -= 1;
 
@@ -58,17 +80,12 @@
     }
 
 
-    let grayedOut = false;
-    let highlight = true;
-    let dateID;
-    let logTracker = {};
-
     const showFormFunction = (e, day_number) => {
+        dateID = e.target.dataset.dateid;  // Now both <li> tag and form have an ID (the same ID)
         show_form = true;
         dayClicked = day_number;
         grayedOut = true;
         highlight = false;
-        dateID = e.target.dataset.dateid;  // Now both <li> tag and form have an ID (the same ID)
     }
 
     const handleClose = () => {
@@ -78,8 +95,15 @@
     }
 
     const saveSchdeule = (e) => {
-        logTracker = Object.defineProperty(logTracker, dateID, {value: e.detail, writable: true});    // Adding in a new day log to logTracker object. The object that was passed to the function, with the specified property added or modified.
-        console.log(logTracker);
+        let wakeUp_Min = e.detail.wakeUp_Min;
+        let sleep_Min = e.detail.sleep_Min;
+        // The following 2 lines are for the minutes input field. If the user enters a value less than 10, there should be a 0 before it.
+        // And if the first value is NOT already a 0, add a 0 before it. (This is to fix the bug where after saving and opening again, an extra 0 gets added everytime)
+        (wakeUp_Min < 10) && (wakeUp_Min[0] !== '0') && (wakeUp_Min !== "") ? (e.detail.wakeUp_Min = '0' + wakeUp_Min) : null;
+        (sleep_Min < 10) && (sleep_Min[0] !== '0') && (sleep_Min !== "")? (e.detail.sleep_Min = '0' + sleep_Min) : null;
+
+        // Adding in a new day log to logTracker object. The object that was passed to the function, with the specified property added or modified.
+        logTracker = Object.defineProperty(logTracker, dateID, {value: e.detail, writable: true});
         
         // Copied from "handleClose"
         show_form = false;
@@ -98,7 +122,15 @@
                 <li class="next" on:click={goToNextMonth}>&#10095;</li>          
             </ul>
 
-            <button id="today_btn" on:click={goToToday}>TODAY</button>
+            <h2 style="margin-top: 5%;">Jump To:</h2>
+            <div class="jumpToWrapper">                
+                <button id="today_btn" on:click={goToToday}>TODAY</button>                
+                <form>
+                    <label for="date_selection">Select A Date:</label>
+                    <input type="date" id="date_selection" name="date_selection">
+                    <input type="submit" value="Go">
+                </form>
+            </div>
         </div>
         
         <ul class="weekdays" class:grayedOut>
@@ -114,26 +146,40 @@
         <ul class="days" class:grayedOut>
             {#each Array(cellQuantity) as _, i}  <!-- Can also do: {length: 42}-->
                 {#if i < firstDayIndex || i >= numberOfDays+firstDayIndex}
-                    <li><div class="dot_blank"></div>&nbsp;</li>
+                    <li><div class="hidden_dot"></div>&nbsp;</li>
+
                 {:else}
-                    <!-- "(currentDay-1)+firstDayIndex"  targets the original numbering. For this line, it's to see if the iterable "i" value is the current day's value.
+                    <!-- "(today.day-1)+firstDayIndex" targets the original numbering. For this line, it's to see if the iterable "i" value is the current day's value.
                     On the other hand, "(i+1)-firstDayIndex" is to modify the numbering from the original. This is to make it to an actual calendar. 
-                    NOTE: When dealing with the iterable "i", we are working with the original numbering under the hood despite it being presented as modified for the user. -->
-                    <li class:highlight class:active={i == (currentDay-1)+firstDayIndex && monthIndex==today.month && year==today.year}  data-dateID="{month}_{(i+1)-firstDayIndex}_{year}" on:click={highlight ? (e) => showFormFunction(e, (i+1)-firstDayIndex) : null}>
-                        <div class="blank_dot"
+                    NOTE: When dealing with the iterable "i", we are working with the original numbering under the hood despite it being presented as modified for the user.
+                    The "highlight" class was made to only highlight the days before and including today, not the days after today. Had to add the highlight boolean variable (on RHS) because without it, when I opened a form and I was hovering over the days preceding today (& today), it would still have the highlight effect in the grayed out background.
+                    The "inaccessible" class was made to block the user from opening any days after today (cuz it doesnt make sense to know all the log/form info ahead of time). Simply compares milliseconds of today and the current iterable "i"'s day. 
+                    For the "on:click" and all it jargon, it was made so that the days after today cannot be opened. Had to add the highlight boolean variable (on RHS) because without it, when I opened a form and tried to click on any day preceding today (& today), it would open that clicked day's form, which is not what I want.   -->
+                    <li class:highlight={highlight && (new Date(`${month} ${(i+1)-firstDayIndex}, ${year}`).getTime() <= date.getTime())}  class:active={i == ((today.day-1)+firstDayIndex) && (monthIndex==today.month) && (year==today.year)}  class:inaccessible={date.getTime() < new Date(`${month} ${(i+1)-firstDayIndex}, ${year}`).getTime()}  data-dateID="{month}_{(i+1)-firstDayIndex}_{year}" on:click={highlight && (new Date(`${month} ${(i+1)-firstDayIndex}, ${year}`).getTime() <= date.getTime()) ? (e) => showFormFunction(e, (i+1)-firstDayIndex) : null}>
+                        <div class="hidden_dot"
                         class:green_dot={`${month}_${(i+1)-firstDayIndex}_${year}` in logTracker && logTracker[`${month}_${(i+1)-firstDayIndex}_${year}`].workout === 'yes'}
-                        class:red_dot={`${month}_${(i+1)-firstDayIndex}_${year}` in logTracker && logTracker[`${month}_${(i+1)-firstDayIndex}_${year}`].workout === 'no'}></div>
+                        class:red_dot={`${month}_${(i+1)-firstDayIndex}_${year}` in logTracker && logTracker[`${month}_${(i+1)-firstDayIndex}_${year}`].workout === 'no'}>
+                        </div>
                         {(i+1)-firstDayIndex}
                     </li> 
                 {/if}
             {/each}
         </ul>
         
+        <!-- The selected form will be presented with either existing values (meaning I've entered values before for this date) 
+            or with default values (meaning this is either my first time opening this date or I reset it and saved.) -->
+        {#if (show_form)}
+            {#if dateID in logTracker}
+                <Form {dateID} dailyLog={logTracker[dateID]} on:close={handleClose} on:submitLog={saveSchdeule}>
+                    <h1 style="margin-bottom: 8%; font-size: x-large; font-weight: 600;">Summary for <br/> {month} {dayClicked}, {year}</h1>
+                </Form>
 
-        {#if show_form}
-            <Form {dateID} on:close={handleClose} on:submitLog={saveSchdeule}>
-                <h1 style="margin-bottom: 8%; font-size: x-large; font-weight: 600;">Summary for <br/> {month} {dayClicked}, {year}</h1>
-            </Form>
+            {:else}
+                <Form {dateID} dailyLog={defaultLog} on:close={handleClose} on:submitLog={saveSchdeule}>
+                    <h1 style="margin-bottom: 8%; font-size: x-large; font-weight: 600;">Summary for <br/> {month} {dayClicked}, {year}</h1>
+                </Form>
+            {/if}
+            
         {/if}
     </div> 
 </main>
@@ -192,11 +238,16 @@
         padding: 0.1%;
     }
 
+    .jumpToWrapper{
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+    }
+
     #today_btn{
         border: 3px solid white;
         border-radius: 5px;
         padding: 0.90%;
-        margin-top: 5%;
         color: rgb(241, 240, 240);
         font-weight: bold;
         transition: 0.2s;
@@ -206,7 +257,6 @@
     #today_btn:hover{
         padding: 1.1%;
         background: #31b49a;
-        
     }
 
     /* Weekdays (Mon-Sun) */
@@ -239,7 +289,6 @@
     text-align: center;
     font-size: 1.2rem;
     color: #777;
-    height: 100%;
     }
 
     .highlight:hover{
@@ -249,15 +298,23 @@
 
     /* Highlight the "current" day */
     .active {
-    padding: 5px;
-    background: #1abc9c;
+    background: rgb(13, 161, 75);
     color: white !important;
+    font-weight: bold;
     }
 
-    .blank_dot{
+    .active:hover{
+        background: #1abc9c;
+        font-weight: bold;
+    }
+
+    .inaccessible{
+        cursor: not-allowed;
+    }
+
+    .hidden_dot{
     height: 12px;
     width: 12px;
-    border-radius: 50%;
     margin: auto;
     }
 
@@ -275,12 +332,6 @@
     background-color: #db2424;
     border-radius: 50%;
     margin: auto;
-    }
-
-    .dot_blank{
-    height: 12px;
-    width: 12px;
-    background-color: #eee;
     }
 
     .close_btn{

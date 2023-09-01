@@ -45,7 +45,7 @@
 </script>
 
 <div class="m-3">
-  <h1 class="shadow-lg text-5xl text-center py-3 text-white">Testing</h1>
+  <h1 class="shadow-lg text-5xl text-center py-3 text-white">Health Log</h1>
 
   <ul class="flex justify-evenly my-10">
     <li class="btn btn-blue" on:click={() => handleClick(0)}>Monday</li>

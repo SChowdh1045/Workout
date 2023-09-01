@@ -42,3 +42,14 @@ let logTracker = {
     .
     .
 }
+
+
+
+
+
+TO-DO: 
+1) "Go to Date" ability
+2) Stop ability to change months while form is open
+3) Fix form formatting
+4) Change "Yes" workout color?
+5) local storage

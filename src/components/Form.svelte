@@ -2,31 +2,34 @@
     import { createEventDispatcher } from "svelte";
     import "../app.css";
 
-    export let dateID;
-
+    export let dateID, dailyLog;
+    
     const dispatch = createEventDispatcher();
 
     const handleClose = () => {
         dispatch('close');
     }
 
+    // Creating a bind between form values and object
     let log = {
-        wakeUp_Hr: "",
-        wakeUp_Min: "",
-        wakeup_am_pm: "",
+        wakeUp_Hr: dailyLog.wakeUp_Hr,
+        wakeUp_Min: dailyLog.wakeUp_Min,
+        wakeup_am_pm: dailyLog.wakeup_am_pm,
 
-        workout: "",
-        foods: "",
-
-        sleep_Hr: "",
-        sleep_Min: "",
-        sleep_am_pm: ""
+        workout: dailyLog.workout,
+        foods: dailyLog.foods,
+        
+        sleep_Hr: dailyLog.sleep_Hr,
+        sleep_Min: dailyLog.sleep_Min,
+        sleep_am_pm: dailyLog.sleep_am_pm
     }
 
-    const submitLog = () => {
+    const submitLog = (log) => {
         dispatch('submitLog', log);
+    }
 
-        // Resetting log after submit
+    const resetBtn = () => {
+        // Resetting log
         log = {            
             wakeUp_Hr: "",
             wakeUp_Min: "",
@@ -48,12 +51,12 @@ class="border-[5px] bg-green-200 border-solid border-green-600 rounded-md text-c
 
     <slot/>
 
-    <form id={dateID} on:submit|preventDefault={submitLog}>
+    <form id={dateID} on:submit|preventDefault={() => submitLog(log)}>
         <h3>When did I wake up?</h3><br>
         <div class="time">
-            <input type="number" id="wakeUp_Hr" name="wakeUp_Hr" value="12" min="1" max="12"><br>
+            <input type="number" id="wakeUp_Hr" name="wakeUp_Hr" placeholder="12" min="1" max="12" bind:value={log.wakeUp_Hr} required><br>
             <span class="semi-colon">:</span>
-            <input type="number" id="wakeUp_Min" name="wakeUp_Min" placeholder="00" min="0" max="59" bind:value={log.wakeUp_Min}>
+            <input type="number" id="wakeUp_Min" name="wakeUp_Min" placeholder="00" min="0" max="59" bind:value={log.wakeUp_Min} required>
 
             <div class="ml-2">
                 <input type="radio" id="wakeUpAm" name="wakeUpTime" value="am" bind:group={log.wakeup_am_pm}>
@@ -67,11 +70,11 @@ class="border-[5px] bg-green-200 border-solid border-green-600 rounded-md text-c
         <h3 class="question">Did I today's workout?</h3><br>
         <div class="yes_no">
             <div>
-                <input type="radio" id="yes" name="workout" value="yes" bind:group={log.workout}>
+                <input type="radio" id="yes" name="workout" value="yes" bind:group={log.workout} required>
                 <label for="yes">Yes</label>
             </div>
             <div>
-                <input type="radio" id="no" name="workout" value="no" bind:group={log.workout}>
+                <input type="radio" id="no" name="workout" value="no" bind:group={log.workout} required>
                 <label for="no">No</label><br>
             </div>
         </div>
@@ -81,9 +84,9 @@ class="border-[5px] bg-green-200 border-solid border-green-600 rounded-md text-c
 
         <h3>When am I filling out this form?</h3><br>
         <div class="time">
-            <input type="number" id="Bedtime_Hr" name="Bedtime_Hr" placeholder="12" min="1" max="12" bind:value={log.sleep_Hr}><br>
+            <input type="number" id="Bedtime_Hr" name="Bedtime_Hr" placeholder="12" min="1" max="12" bind:value={log.sleep_Hr} required><br>
             <span class="semi-colon">:</span>
-            <input type="number" id="Bedtime_Min" name="Bedtime_Min" placeholder="00" min="0" max="59" bind:value={log.sleep_Min}><br>
+            <input type="number" id="Bedtime_Min" name="Bedtime_Min" placeholder="00" min="0" max="59" bind:value={log.sleep_Min} required><br>
 
             <div class="ml-2">
                 <input type="radio" id="amSleep" name="SleepTime" value="am" bind:group={log.sleep_am_pm}>
@@ -96,7 +99,7 @@ class="border-[5px] bg-green-200 border-solid border-green-600 rounded-md text-c
 
         <div class="actions">
             <button class="btn btn-red" on:click={handleClose}>Cancel</button>
-            <input type="reset" value="Reset" class="btn btn-reset">
+            <input type="reset" value="Reset" class="btn btn-reset" on:click={resetBtn}>
             <input type="submit" value="Save" class="btn btn-green">
         </div>
   </form>
