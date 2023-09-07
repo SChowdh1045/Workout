@@ -32,14 +32,24 @@
     $: cellQuantity = Math.ceil((firstDayIndex + numberOfDays) / 7) * 7;  // firstDayIndex is to know how many blank spaces there are before the first day
                                                                             //  Add firstDayIndex + numberOfDays to figure out how far to push the calendar down
                                                                             // Then divide by 7 to know how many rows there would be. Take the ceiling of that number then multiply by 7 to have nice calendar format
-
+    
+    
     
     let show_form = false;
     let grayedOut = false;
     let highlight = true;
     let dateID;
-    let logTracker = {};
-    
+
+    // Have to make 2 different objects to track daily logs. "logTracker" for component render & "localStorage" for persistent data (after I close session and re-open application, data will not be wiped).
+    // What I mean by " "logTracker" for component render ", is that when I did it with localStorage, when I saved a log, the workout color dot would not appear right away. I'm guessing it's because localStorage doesn't do a re-render?
+    // It's only after restarting the application that the dot would appear, which was not ideal. Therefore, logTracker object first takes in all the existing data from localStorage, then have to parse the values, since in localStorage, they're stored as strings. Then assign it back to logTracker.
+    // After that, the daily logs would get added to both logTracker & localStorage the normal way (inside "saveSchdeule" function).
+    // NOTE: "Object.entries(localStorage)" returns an array of array/s. So, returns one (big?) array where each of its elements are arrays themselves containing property-value pairs of the passed object.
+    let logTracker = {...localStorage};
+    for (const [key, value] of Object.entries(localStorage)){
+        logTracker[key] = JSON.parse(value);
+    }
+
     let defaultLog = {
         wakeUp_Hr: "",
         wakeUp_Min: "",
@@ -79,6 +89,16 @@
         year = today.year;  // or can do just "year = date.getFullYear()"
     }
 
+    let goToDate = "";
+    const goToDateSplitter = () => {
+        let splitDate = goToDate.split("-");  // The value of the "date" input returns as "yyyy-mm-dd" format. I just want year & month, so I have to split by "-" then take the values from the returned list.
+
+        year = parseInt(splitDate[0]);
+        monthIndex = parseInt(splitDate[1]) - 1; // Since monthIndex takes values from 0-11 (Jan - Dec respectively) and the splitDate values go from 1-12, I need to subtract 1 to get the right index number
+    }
+
+
+
 
     const showFormFunction = (e, day_number) => {
         dateID = e.target.dataset.dateid;  // Now both <li> tag and form have an ID (the same ID)
@@ -102,8 +122,10 @@
         (wakeUp_Min < 10) && (wakeUp_Min[0] !== '0') && (wakeUp_Min !== "") ? (e.detail.wakeUp_Min = '0' + wakeUp_Min) : null;
         (sleep_Min < 10) && (sleep_Min[0] !== '0') && (sleep_Min !== "")? (e.detail.sleep_Min = '0' + sleep_Min) : null;
 
-        // Adding in a new day log to logTracker object. The object that was passed to the function, with the specified property added or modified.
+        // Adding in a new day log to logTracker & localStorage (see explanation in line 43).
         logTracker = Object.defineProperty(logTracker, dateID, {value: e.detail, writable: true});
+        localStorage.setItem(dateID, JSON.stringify(e.detail));
+
         
         // Copied from "handleClose"
         show_form = false;
@@ -117,19 +139,23 @@
     <div class="calendarWrapper">
         <div class="month" class:grayedOut>  <!-- "class:grayedOut" is equivalent to "class:grayedOut={grayedOut}". The first "grayedOut" is the class to toggle. The second "grayedOut" is the boolean variable -->
             <ul style="display: flex; justify-content: space-between; align-items: center;">
-                <li class="prev" on:click={goToPrevMonth}>&#10094;</li>
-                <li>{month}<br>{year}</li>
-                <li class="next" on:click={goToNextMonth}>&#10095;</li>          
+                <li class:prev={highlight} on:click={highlight ? goToPrevMonth : null}>&#10094;</li>
+                <li style="color: #fff; font-weight: bold;">{month}<br>{year}</li>
+                <li class:next={highlight} on:click={highlight ? goToNextMonth : null}>&#10095;</li>          
             </ul>
 
-            <h2 style="margin-top: 5%;">Jump To:</h2>
-            <div class="jumpToWrapper">                
-                <button id="today_btn" on:click={goToToday}>TODAY</button>                
-                <form>
-                    <label for="date_selection">Select A Date:</label>
-                    <input type="date" id="date_selection" name="date_selection">
-                    <input type="submit" value="Go">
+            <hr style="margin: 4% 0;"/>
+
+            <h2 style="color: #fff;">Select A Date:</h2>
+            <div style="display: flex; justify-content: space-around; align-items: center;">
+
+                <button class="date_btn" on:click={highlight ? goToToday : null}>TODAY</button>                
+                
+                <form style="display: flex; justify-content: space-around;" on:submit|preventDefault={goToDateSplitter}>
+                    <input type="date" id="date_selection" name="date_selection" bind:value={goToDate} required>
+                    <input type="submit" class="date_btn" value="Go">
                 </form>
+
             </div>
         </div>
         
@@ -157,8 +183,8 @@
                     For the "on:click" and all it jargon, it was made so that the days after today cannot be opened. Had to add the highlight boolean variable (on RHS) because without it, when I opened a form and tried to click on any day preceding today (& today), it would open that clicked day's form, which is not what I want.   -->
                     <li class:highlight={highlight && (new Date(`${month} ${(i+1)-firstDayIndex}, ${year}`).getTime() <= date.getTime())}  class:active={i == ((today.day-1)+firstDayIndex) && (monthIndex==today.month) && (year==today.year)}  class:inaccessible={date.getTime() < new Date(`${month} ${(i+1)-firstDayIndex}, ${year}`).getTime()}  data-dateID="{month}_{(i+1)-firstDayIndex}_{year}" on:click={highlight && (new Date(`${month} ${(i+1)-firstDayIndex}, ${year}`).getTime() <= date.getTime()) ? (e) => showFormFunction(e, (i+1)-firstDayIndex) : null}>
                         <div class="hidden_dot"
-                        class:green_dot={`${month}_${(i+1)-firstDayIndex}_${year}` in logTracker && logTracker[`${month}_${(i+1)-firstDayIndex}_${year}`].workout === 'yes'}
-                        class:red_dot={`${month}_${(i+1)-firstDayIndex}_${year}` in logTracker && logTracker[`${month}_${(i+1)-firstDayIndex}_${year}`].workout === 'no'}>
+                        class:green_dot={`${month}_${(i+1)-firstDayIndex}_${year}` in logTracker && logTracker[`${month}_${(i+1)-firstDayIndex}_${year}`].workout == 'yes'}
+                        class:red_dot={`${month}_${(i+1)-firstDayIndex}_${year}` in logTracker && logTracker[`${month}_${(i+1)-firstDayIndex}_${year}`].workout == 'no'}>
                         </div>
                         {(i+1)-firstDayIndex}
                     </li> 
@@ -167,19 +193,11 @@
         </ul>
         
         <!-- The selected form will be presented with either existing values (meaning I've entered values before for this date) 
-            or with default values (meaning this is either my first time opening this date or I reset it and saved.) -->
+            or with default values (meaning this is my first time opening this date.) -->
         {#if (show_form)}
-            {#if dateID in logTracker}
-                <Form {dateID} dailyLog={logTracker[dateID]} on:close={handleClose} on:submitLog={saveSchdeule}>
-                    <h1 style="margin-bottom: 8%; font-size: x-large; font-weight: 600;">Summary for <br/> {month} {dayClicked}, {year}</h1>
-                </Form>
-
-            {:else}
-                <Form {dateID} dailyLog={defaultLog} on:close={handleClose} on:submitLog={saveSchdeule}>
-                    <h1 style="margin-bottom: 8%; font-size: x-large; font-weight: 600;">Summary for <br/> {month} {dayClicked}, {year}</h1>
-                </Form>
-            {/if}
-            
+            <Form {dateID} dailyLog={dateID in logTracker ? logTracker[dateID] : defaultLog} on:close={handleClose} on:submitLog={saveSchdeule}>
+                <h1 style="margin-bottom: 8%; font-size: x-large; font-weight: 600;">Summary for <br/> {month} {dayClicked}, {year}</h1>
+            </Form>
         {/if}
     </div> 
 </main>
@@ -217,34 +235,28 @@
     }
 
     .prev{
-        cursor: pointer;
         transition: 0.1s;
     }
 
     .prev:hover{
+        cursor: pointer;
         border: 2px solid white;
         border-radius: 8px;
         padding: 0.1%;
     }
 
     .next{
-        cursor: pointer;
         transition: 0.1s;
     }
 
     .next:hover{
+        cursor: pointer;
         border: 2px solid white;
         border-radius: 8px;
         padding: 0.1%;
     }
 
-    .jumpToWrapper{
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-    }
-
-    #today_btn{
+    .date_btn{
         border: 3px solid white;
         border-radius: 5px;
         padding: 0.90%;
@@ -254,10 +266,17 @@
         background: #349b86;
     }
 
-    #today_btn:hover{
+    .date_btn:hover{
+        cursor: pointer;
         padding: 1.1%;
         background: #31b49a;
     }
+
+    #date_selection{
+        border: 1px solid #000;
+        margin-right: 2%;
+    }
+
 
     /* Weekdays (Mon-Sun) */
     .weekdays {

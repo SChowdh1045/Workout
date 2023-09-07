@@ -6,9 +6,6 @@
     
     const dispatch = createEventDispatcher();
 
-    const handleClose = () => {
-        dispatch('close');
-    }
 
     // Creating a bind between form values and object
     let log = {
@@ -42,6 +39,10 @@
             sleep_Min: "",
             sleep_am_pm: ""
         }
+    }
+
+    const handleClose = () => {
+        dispatch('close');
     }
 </script>
 
