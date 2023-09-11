@@ -72,7 +72,7 @@
         <p class="text-white mt-5">INSTRUCTIONS:</p>
 
         <div
-          class="text-white border-2 border-solid border-green-300 w-10/12 m-auto"
+          class="text-white border-2 border-solid border-blue-300 w-10/12 m-auto"
         >
           <p>1. First exercise</p>
           <p>2. Second exercise</p>

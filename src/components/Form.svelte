@@ -21,9 +21,6 @@
         sleep_am_pm: dailyLog.sleep_am_pm
     }
 
-    const submitLog = (log) => {
-        dispatch('submitLog', log);
-    }
 
     const resetBtn = () => {
         // Resetting log
@@ -39,21 +36,26 @@
             sleep_Min: "",
             sleep_am_pm: ""
         }
+
     }
 
     const handleClose = () => {
         dispatch('close');
     }
+
+    const submitLog = (log) => {
+        dispatch('submitLog', log);
+    }
 </script>
 
 <div 
-class="border-[5px] bg-green-200 border-solid border-green-600 rounded-md text-center w-2/5 px-2 pt-2 pb-3 absolute left-[30%] bottom-[5%] max-h-[90%]">
+class="border-[5px] border-solid border-blue-600 rounded-md bg-blue-200 text-center w-2/5 px-2 pt-2 pb-3 absolute left-[30%] bottom-[5%] max-h-[90%]">
     <div class="x_btn" on:click={handleClose}>&#10006;</div>   <!-- "X" mark close button -->
 
     <slot/>
 
     <form id={dateID} on:submit|preventDefault={() => submitLog(log)}>
-        <h3>When did I wake up?</h3><br>
+        <h3 class="question">When did I wake up?</h3><br>
         <div class="time">
             <input type="number" id="wakeUp_Hr" name="wakeUp_Hr" placeholder="12" min="1" max="12" bind:value={log.wakeUp_Hr} required><br>
             <span class="semi-colon">:</span>
@@ -83,11 +85,11 @@ class="border-[5px] bg-green-200 border-solid border-green-600 rounded-md text-c
         <h3 class="question">Foods I ate today:</h3><br>
         <textarea id="foods" bind:value={log.foods}></textarea><br><br>
 
-        <h3>When am I filling out this form?</h3><br>
+        <h3 class="question">When am I going to sleep?</h3><br>
         <div class="time">
-            <input type="number" id="Bedtime_Hr" name="Bedtime_Hr" placeholder="12" min="1" max="12" bind:value={log.sleep_Hr} required><br>
+            <input type="number" id="Bedtime_Hr" name="Bedtime_Hr" placeholder="12" min="1" max="12" bind:value={log.sleep_Hr}><br>
             <span class="semi-colon">:</span>
-            <input type="number" id="Bedtime_Min" name="Bedtime_Min" placeholder="00" min="0" max="59" bind:value={log.sleep_Min} required><br>
+            <input type="number" id="Bedtime_Min" name="Bedtime_Min" placeholder="00" min="0" max="59" bind:value={log.sleep_Min}><br>
 
             <div class="ml-2">
                 <input type="radio" id="amSleep" name="SleepTime" value="am" bind:group={log.sleep_am_pm}>
@@ -151,17 +153,17 @@ class="border-[5px] bg-green-200 border-solid border-green-600 rounded-md text-c
 
 
     .yes_no{
-        @apply flex justify-evenly -m-6 mb-5;
+        @apply flex justify-evenly -m-6 mb-6;
     }
 
 
     #foods{
-        @apply resize-y -mt-6 border-solid border-[1px] border-black rounded-md max-h-16 px-3;
+        @apply resize-y -mt-6 mb-2 border-solid border-[1px] border-black rounded-md max-h-16 px-3;
     }
 
 
     .time{
-        @apply flex justify-center items-stretch mb-5;
+        @apply flex justify-center items-stretch mb-8 -mt-6;
     }
     .time input{
         @apply text-center border-solid border-[1px] border-black rounded-md pl-2 text-lg;

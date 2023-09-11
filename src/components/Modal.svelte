@@ -9,7 +9,7 @@
     }
 </script>
 
-<div class="border-8 border-solid border-green-600 rounded-md text-center w-2/5 mx-auto p-2">
+<div class="border-8 border-solid border-blue-600 rounded-md text-center w-2/5 mx-auto p-2">
     <slot />
     <button class="btn btn-blue" on:click={handleClose}>Close</button>
 </div>

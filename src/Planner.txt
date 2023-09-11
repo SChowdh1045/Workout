@@ -48,7 +48,4 @@ let logTracker = {
 
 
 TO-DO: 
-* local storage
-* make "r u sure you want to reset this log?" modal 
-* Fix form formatting
-* Change Calendar color to blue?
+* List the exercises in the top modal
